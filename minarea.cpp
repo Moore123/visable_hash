@@ -2,6 +2,7 @@
 #include "opencv2/imgproc.hpp"
 
 #include "murmurhash3.hpp"
+#include "xxhash.hpp"
 
 #include <iostream>
 #include <random>
@@ -13,6 +14,8 @@
 #include <random>
 #include <time.h>
 
+//uint64_t MurmurHash64A(const void *key, int len, unsigned int seed)
+//XXH_PUBLIC_API XXH64_hash_t XXH64(const void* input, size_t length, XXH64_hash_t seed);
 
 using namespace cv;
 using namespace std;
@@ -193,7 +196,8 @@ int main(int argc, char** argv) {
       Point3d xrgb;
       if ( rrandom == 0 ) {
         string tmps = generate(tvalue);
-        xtmp=MurmurHash64A((const void *)tmps.c_str(), tvalue,magic_num);
+        //xtmp=MurmurHash64B((const void *)tmps.c_str(), tvalue,magic_num);
+        xtmp=XXH64((const void *)tmps.c_str(), tvalue,magic_num);
         //magic_num = ( xtmp >> 10 ) & 0xFFFFFFFF;
       }
       else xtmp = dis(gen);
@@ -232,8 +236,14 @@ int main(int argc, char** argv) {
 
     // Draw the points
     for (i = 0; i < num_points; i++) {
-      circle(img, points[i], 1, Scalar(xyzPoints[i].x , xyzPoints[i].y , xyzPoints[i].z), FILLED, LINE_AA);
+      //  Vec3b & color = image.at<Vec3b>(y,x);
+      Vec3b & color = img.at<Vec3b>(points[i].x , points[i].y);
+      color[0]=xyzPoints[i].x;
+      color[1]=xyzPoints[i].y;
+      color[2]=xyzPoints[i].z;
+      //circle(img, points[i], 1, Scalar(xyzPoints[i].x , xyzPoints[i].y , xyzPoints[i].z), FILLED, LINE_AA);
     }
+
     if ( fname != NULL ) {
       imwrite(fname, img);
       break;
