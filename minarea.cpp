@@ -237,7 +237,7 @@ int main(int argc, char** argv) {
     // Draw the points
     for (i = 0; i < num_points; i++) {
       //  Vec3b & color = image.at<Vec3b>(y,x);
-      Vec3b & color = img.at<Vec3b>(points[i].x , points[i].y);
+      Vec3b & color = img.at<Vec3b>(points[i].y , points[i].x);
       color[0]=xyzPoints[i].x;
       color[1]=xyzPoints[i].y;
       color[2]=xyzPoints[i].z;
