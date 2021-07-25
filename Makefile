@@ -17,8 +17,8 @@ endif
 
 all: minarea 
 
-minarea: minarea.o murmurhash3.o xxhash.o
-	$(NVCC) minarea.o murmurhash3.o xxhash.o  -o sample_minarea $(LDFLAGS)
+minarea: minarea.o murmurhash3.o xxhash.o fasthash.o
+	$(NVCC) minarea.o murmurhash3.o xxhash.o fasthash.o  -o sample_minarea $(LDFLAGS)
 
 clean:
 	rm -rf *.o

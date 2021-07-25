@@ -3,6 +3,7 @@
 
 #include "murmurhash3.hpp"
 #include "xxhash.hpp"
+#include "fasthash.hpp"
 
 #include <iostream>
 #include <random>
@@ -16,6 +17,7 @@
 
 //uint64_t MurmurHash64A(const void *key, int len, unsigned int seed)
 //XXH_PUBLIC_API XXH64_hash_t XXH64(const void* input, size_t length, XXH64_hash_t seed);
+//uint64_t fasthash64(const void *buf, size_t len, uint64_t seed)
 
 using namespace cv;
 using namespace std;
@@ -197,7 +199,8 @@ int main(int argc, char** argv) {
       if ( rrandom == 0 ) {
         string tmps = generate(tvalue);
         //xtmp=MurmurHash64B((const void *)tmps.c_str(), tvalue,magic_num);
-        xtmp=XXH64((const void *)tmps.c_str(), tvalue,magic_num);
+        //xtmp=XXH64((const void *)tmps.c_str(), tvalue,magic_num);
+        xtmp=fasthash64((const void *)tmps.c_str(), tvalue,magic_num);
         //magic_num = ( xtmp >> 10 ) & 0xFFFFFFFF;
       }
       else xtmp = dis(gen);
