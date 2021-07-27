@@ -46,7 +46,10 @@ static void help() {
     << "-b  bit width [color]x3:width:height\n"
     << "-f  output filename otherwise rep-change display\n"
     << "-p  points\n"
-    << "-r  pure random\n"
+    << "-r  0 pure random\n"
+    << "    1 MurmurHash64B\n"
+    << "    2 XXH64\n"
+    << "    3 fasthash64\n"
     << "-t  test\n"
     << "-x  width\n"
     << "-y  height\n"
@@ -116,15 +119,15 @@ int main(int argc, char** argv) {
   std::mt19937_64 gen(rd());
   std::uniform_int_distribution < uint64_t > dis;
 
-  while ((c = getopt(argc, argv, "b:f:hn:rt:p:x:y:")) != -1) {
+  while ((c = getopt(argc, argv, "b:f:hn:r:t:p:x:y:")) != -1) {
     switch (c) {
       case 'n':
         if (optarg)
           nvalue = optarg;
         break;
       case 'r':
-        rrandom = 1;
-        srand (time(NULL));
+        if ( (rrandom = atoi(optarg)) == 0 ) 
+            srand (time(NULL));
         break;
 
       case 't':
@@ -196,15 +199,23 @@ int main(int argc, char** argv) {
     for (i = 0; i < num_points; i++) {
       Point pt;
       Point3d xrgb;
-      if ( rrandom == 0 ) {
-        string tmps = generate(tvalue);
-        //xtmp=MurmurHash64B((const void *)tmps.c_str(), tvalue,magic_num);
-        //xtmp=XXH64((const void *)tmps.c_str(), tvalue,magic_num);
-        xtmp=fasthash64((const void *)tmps.c_str(), tvalue,magic_num);
-        //magic_num = ( xtmp >> 10 ) & 0xFFFFFFFF;
-      }
-      else xtmp = dis(gen);
-
+      
+      string tmps = generate(tvalue);
+        switch(rrandom) {
+            case 0:
+               xtmp = dis(gen);
+               break;
+            case 1:
+                xtmp=MurmurHash64B((const void *)tmps.c_str(), tvalue,magic_num);
+                break;
+            case 2:
+                xtmp=XXH64((const void *)tmps.c_str(), tvalue,magic_num);
+                break;
+            case 3:
+                xtmp=fasthash64((const void *)tmps.c_str(), tvalue,magic_num);
+                break;
+        }
+      //magic_num = ( xtmp >> 10 ) & 0xFFFFFFFF;
       //else xtmp = getRandom(0, ULLONG_MAX);
 
       pt.y = (xtmp & (uint64_t)xmask)%xwidth;
